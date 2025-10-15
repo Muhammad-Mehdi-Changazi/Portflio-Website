@@ -7,6 +7,8 @@ import AnimatedSkills from "./skills.animation";
 import manzil from '../styles/Manzil.png';
 import SnackOutLogo from "../styles/snack-out.svg"
 import { Tabs, TabsList, TabsTrigger, TabsContent } from '@radix-ui/react-tabs'; // Example import, adjust based on your library
+import { ToastContainer, toast } from 'react-toastify';
+import 'react-toastify/dist/ReactToastify.css';
 
 const MainPage = () => {
     const [typedName, setTypedName] = useState('');
@@ -35,32 +37,61 @@ const MainPage = () => {
         setFormData({ ...formData, [name]: value });
     };
 
-    const handleSubmit = (e) => {
-        e.preventDefault();
-        fetch('https://portfolio-website-ruby-one.vercel.app/send', {
-            method: 'POST',
-            headers: {
-                'Content-Type': 'application/json'
+const handleSubmit = (e) => {
+    e.preventDefault();
+    fetch('https://portflio-website-ufkd.vercel.app/send', {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/json'
+        },
+        body: JSON.stringify(formData)
+    })
+    .then(response => {
+        if (!response.ok) {
+            throw new Error('Network response was not ok');
+        }
+        return response.text();
+    })
+    .then(data => {
+        console.log(data);
+        setFormData({ name: '', email: '', message: '' }); // Reset the form
+        toast.success('Message sent successfully!', {
+            position: 'top-right',
+            autoClose: 3000,
+            hideProgressBar: false,
+            closeOnClick: true,
+            pauseOnHover: true,
+            draggable: true,
+            style: {
+                backgroundColor: 'white', // White background
+                color: 'Black',        // Navy blue text
+                fontWeight: 'bold',
+                borderRadius: '8px',
+                border: '2px solid white' // optional: add border to make it visible
             },
-            body: JSON.stringify(formData)
-        })
-        .then(response => {
-            if (!response.ok) {
-                throw new Error('Network response was not ok');
-            }
-            return response.text();
-        })
-        .then(data => {
-            console.log(data);
-            setFormData({ name: '', email: '', message: '' }); // Reset the form
-            alert('Message sent successfully!'); // Show a success message
-        })
-        .catch(error => {
-            console.error('There was a problem with the fetch operation:', error);
-            alert('Failed to send message. Please try again later.'); // Show an error message
+            icon: '🚀'
         });
-    };
 
+    })
+    .catch(error => {
+        console.error('There was a problem with the fetch operation:', error);
+        toast.error('Failed to send message. Please try again later.', {
+            position: 'top-right',
+            autoClose: 3000,
+            hideProgressBar: false,
+            closeOnClick: true,
+            pauseOnHover: true,
+            draggable: true,
+            style: {
+                backgroundColor: 'white', 
+                color: 'black',
+                fontWeight: 'bold',
+                borderRadius: '8px'
+            },
+            icon: '⚠️'
+        });
+    });
+};
 
 
     // Typing effect for full name
@@ -606,7 +637,7 @@ const MainPage = () => {
                 </div>
             </footer>
 
-
+        <ToastContainer />
         </>
 
         
